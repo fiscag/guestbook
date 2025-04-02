@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guestbook</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 0.5rem;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    .name {
+      font-weight: bold;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .message {
+      font-size: 1rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Guestbook</h1>
+  <div id="guestbook"></div>
+
+  <script>
+    const sheetID = "117T60UAgydpQXw71kuU4PMpvMxxlCoGSMk6ZRW0CeX0";
+    const sheetName = "Guestbook from porto dua";
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${sheetName}`;
+
+    fetch(url)
+      .then((res) => res.text())
+      .then((data) => {
+        const jsonData = JSON.parse(data.substr(47).slice(0, -2));
+        const rows = jsonData.table.rows;
+        const container = document.getElementById("guestbook");
+
+        rows.forEach((row, i) => {
+          if (i === 0) return;
+          const name = row.c[0]?.v || "(No Name)";
+          const thought = row.c[2]?.v || "";
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <div class="message">${thought}</div>
+            <div class="name">— ${name}</div>
+          `;
+          container.appendChild(card);
+        });
+      });
+  </script>
+</body>
+</html>
